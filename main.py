@@ -2,8 +2,8 @@ from db import main_db
 import flet as ft 
 
 
+
 def main(page: ft.Page):
-    page.title = 'ToDO List'
     page.theme_mode = ft.ThemeMode.LIGHT
     task_list = ft.Column(spacing=10)
 
