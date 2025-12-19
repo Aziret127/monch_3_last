@@ -1,12 +1,11 @@
 from db import main_db
-import flet as ft 
-
+import flet as ft
 
 
 def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
     task_list = ft.Column(spacing=10)
-
+    
     filter_type = 'all'
 
     def load_tasks():
@@ -38,14 +37,26 @@ def main(page: ft.Page):
             main_db.delete_task(task_id)
             load_tasks()
             page.update()
-
+        
         delete_button = ft.IconButton(icon=ft.Icons.DELETE, on_click=delete_task_onclik, icon_color=ft.Colors.RED_500)
         return ft.Row([checkbox, task_field, edit_button, save_button,delete_button])
     
+
     def toggle_task(task_id, is_completed):
         main_db.update_task(task_id=task_id, completed=int(is_completed))
         load_tasks()
 
+    # def clear_completed_tasks(_):  
+    #     main_db.delete_completed_tasks()
+    #     load_tasks()
+    
+    # page.update()
+    # clear_button = ft.ElevatedButton(
+    #    text="Очистить выполненные",
+    #    icon=ft.Icons.DELETE,
+    #    icon_color=ft.Colors.RED,
+    #    on_click=clear_completed_tasks
+    #  ) 
     def add_task(_):
         if task_input.value:
             task = task_input.value
@@ -57,24 +68,35 @@ def main(page: ft.Page):
 
     task_input = ft.TextField(label='Введите задачу', on_submit=add_task, expand=True)
     task_input_button = ft.IconButton(icon=ft.Icons.SEND, on_click=add_task)
-
+    
     def set_filter(filter_value):
         nonlocal filter_type
         filter_type = filter_value
         load_tasks()
 
+    
     filter_buttons = ft.Row([
         ft.ElevatedButton('Все задачи', on_click=lambda e: set_filter('all'), icon=ft.Icons.ALL_INBOX, icon_color=ft.Colors.YELLOW),
         ft.ElevatedButton('Ожидают', on_click=lambda e: set_filter('uncompleted'), icon=ft.Icons.WATCH_LATER, icon_color=ft.Colors.RED),
-        ft.ElevatedButton("Готово", on_click=lambda e: set_filter('completed'), icon=ft.Icons.CHECK_BOX, icon_color=ft.Colors.GREEN)
+        ft.ElevatedButton("Готово", on_click=lambda e: set_filter('completed'), icon=ft.Icons.CHECK_BOX, icon_color=ft.Colors.GREEN),
+       
     ], alignment=ft.MainAxisAlignment.SPACE_EVENLY)
+    def clear_completed_tasks(_):  
+        main_db.delete_completed_tasks()
+        load_tasks()
+        
+    clear_button = ft.ElevatedButton(
+       text="Очистить выполненные",
+       icon=ft.Icons.DELETE,
+       icon_color=ft.Colors.RED,
+       on_click=clear_completed_tasks
+     ) 
+    page.add(ft.Row([task_input, task_input_button]), filter_buttons, task_list,clear_button)
+    load_tasks()     
 
-    page.add(ft.Row([task_input, task_input_button]), filter_buttons, task_list)
-    load_tasks()
 
 
 if __name__ == '__main__':
     main_db.init_db()
     ft.app(target=main)
 
-    
