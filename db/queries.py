@@ -18,4 +18,4 @@ SELECT_TASKS_COMPLETED = "SELECT id, task, completed FROM tasks WHERE completed 
 
 UPDATE_TASKS = "UPDATE tasks SET task = ? WHERE id = ?"
 
-DELETE_TASKS = 'DELETE FROM tasks WHERE id = ?'
+DELETE_TASKS = "DELETE FROM tasks WHERE id = ?"
