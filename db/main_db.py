@@ -2,6 +2,7 @@ import sqlite3
 from config import path_db
 from db import queries
 
+
 def init_db():
     conn = sqlite3.connect(path_db)
     cursor = conn.cursor()
@@ -54,6 +55,15 @@ def update_task(task_id, new_task=None, completed=None):
 def delete_task(task_id):
     conn = sqlite3.connect(path_db)
     cursor = conn.cursor()
-    cursor.execute(queries.DELETE_TASKS, (task_id, ))
+    cursor.execute("queries.DELETE FROM tasks WHERE id = ?", (task_id, ) )
+    conn.commit()
+    conn.close()
+
+
+
+def delete_completed_tasks():
+    conn = sqlite3.connect(path_db)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM tasks WHERE completed = 1")
     conn.commit()
     conn.close()
